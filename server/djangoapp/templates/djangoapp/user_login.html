@@ -14,7 +14,7 @@
 </head>
 
     <body>
-    <!--Add a nav bar here -->
+
         <nav class="navbar navbar-dark bg-dark">
             <div class="container-fluid d-flex justify-content-start">
                 <div class="navbar-header">
@@ -31,31 +31,26 @@
                         <a class="dropdown-item" href="{% url 'djangoapp:about' %}">About Us</a>
                     </div>
                 </div>
-                <ul class="nav navbar-nav ml-auto">
-                    {% if user.is_authenticated %}
-                    <li>
-                    <!-- add logged in info here -->
-                        <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
-                        <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
-                    </li>
-                    {% else %}
-                    <li>
-                        <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
-                            {% csrf_token %}
-                            <div class="input-group">
-                                <input type="text" class="form-control" style="max-width:150px" name="username" placeholder="User Name">
-                                <input type="password" class="form-control" style="max-width:150px" name="psw" placeholder="Password">
-                                <button type="submit" class="btn btn-primary">Login</button>
-                                <a href="{% url 'djangoapp:signup' %}" class="btn btn-dark">Sign Up</a>
-                            </div>
-                        </form>
-                    </li>
-                    {% endif %}
-                </ul>
             </div>
         </nav>
-    <!--Add a dealer table here -->
+        <div class="container-fluid" style="padding-top:50px">
+            <div class="d-flex flex-column text-center">
+                <h1 class="p-2">Login to your account</h1>
+                <span ></span>
+                <form class="form p-2" action="{% url 'djangoapp:login' %}" method="post">
+                    {% csrf_token %}
+                    <label style="padding-top:30px">Username: </label>
+                    <input type="text" class="form-control text-center mx-auto" style="max-width:150px" name="username" placeholder="your user name" required>
+                    <label style="padding-top:15px">Password: </label>
+                    <input type="password" class="form-control text-center mx-auto" style="max-width:150px" name="psw" placeholder="your password" required>
+                    <div style="padding-top:15px">
+                        <button type="submit" class="btn btn-primary" style="min-width:150px">Login</button><br>
+                        <p style="padding-top:10px">Or <a href="{% url 'djangoapp:signup' %}" class="link-primary">Sign Up</a> for a new account</p>
+                    </div>
 
+                </form>
+            </div>
+        </div>
     </body>
 
 </html>

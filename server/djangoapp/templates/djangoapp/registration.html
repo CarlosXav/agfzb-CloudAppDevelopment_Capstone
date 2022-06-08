@@ -2,10 +2,80 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    {% load static %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Dealership Review</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link href="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+
 </head>
+
     <body>
-    <!--Add a registration form here -->
+
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid d-flex justify-content-start">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="{% url 'djangoapp:index' %}">
+                        <b class="text-white">Best Cars</b> <i class="navbar-text">dealership</i>
+                    </a>
+                </div>
+                <div class="dropdown">
+                    <a class="btn btn-dark navbar-text dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        More
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'djangoapp:contact' %}">Contact</a>
+                        <a class="dropdown-item" href="{% url 'djangoapp:about' %}">About Us</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div class="container-fluid" style="padding-top:50px">
+            <div class="d-flex flex-column text-center">
+                <h1 class="p-2">Sign Up</h1>
+                <span ></span>
+                <form class="form p-2" action="{% url 'djangoapp:signup' %}" method="post">
+                    {% csrf_token %}
+                    <div class="container d-flex flex-column" style="max-width:500px">
+                        <div style="padding-top:10px" class="input-group justify-content-center p-2">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Username: </span>
+                            </div>
+                            <input type="text" class="form-control" style="" name="username" placeholder="your user name" required>
+                            {% if name_taken %}
+                            <div class="input-group-append">
+                                <span class="input-group-text alert-danger" data-toggle="tooltip" data-placement="right" title="Username already taken">!</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div style="padding-top:10px" class="input-group justify-content-center p-2">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">First Name: </span>
+                            </div>
+                            <input type="text" class="form-control" style="" name="firstname" placeholder="your first name" required>
+                        </div>
+                        <div style="padding-top:10px" class="input-group justify-content-center p-2">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Last Name: </span>
+                            </div>
+                            <input type="text" class="form-control" style="" name="lastname" placeholder="your last name" required>
+                        </div>
+                        <div style="padding-top:10px" class="input-group justify-content-center p-2">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Password: </span>
+                            </div>
+                            <input type="password" class="form-control" style="" name="password" placeholder="your desired password" required>
+                        </div>
+                        <div style="padding-top:15px">
+                            <button type="signup" class="btn btn-primary" style="min-width:150px">Sign Up</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </body>
+
 </html>
