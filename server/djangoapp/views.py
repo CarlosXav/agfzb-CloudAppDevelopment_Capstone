@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-# from .models import related models
-# from .restapis import related methods
+from .models import CarDealer, CarMake, CarModel
+from .restapis import get_dealer_reviews_from_cf, get_dealers_from_cf, post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -16,6 +16,12 @@ logger = logging.getLogger(__name__)
 
 # Create your views here.
 
+#Static "main" page
+def index(request):
+    '''
+    Renders the index page
+    '''
+    return render(request, 'djangoapp/index.html', context={})
 
 # Create an `about` view to render a static about page
 def about(request):
@@ -104,17 +110,47 @@ def registration_request(request):
 def get_dealerships(request):
     context = {}
     if request.method == "GET":
-
-        return render(request, 'djangoapp/index.html', context)
+        url = "https://5d414de5.us-south.apigw.appdomain.cloud/api/dealership"
+        #Get dealers from URL
+        dealerships = get_dealers_from_cf(url=url)
+        #Concatenate all dealers' short name
+        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+        #Return a list of dealer short names
+        return HttpResponse(dealer_names)
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
-# def get_dealer_details(request, dealer_id):
-#     context = {}
-#     if request.method == 'GET':
-#         return render(request, 'djangoapp/dealer_details.html')
+def get_dealer_details(request, dealer_id):
+    context = {}
+    if request.method == 'GET':
+        url = "https://5d414de5.us-south.apigw.appdomain.cloud/api/review"
+        reviews = get_dealer_reviews_from_cf(url=url, dealer_id=dealer_id)
+        context['reviews'] = reviews
+        #Concatenate all reviews
+        readableReviews = '<br>'.join(str(review) for review in reviews)
+        return HttpResponse(readableReviews)
 
 
 # Create a `add_review` view to submit a review
-# def add_review(request, dealer_id):
-# ...
+def add_review(request, dealer_id):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            #car = CarModel.objects.get(pk=car_id)
+            review = dict()
+            review["time"] = datetime.utcnow().isoformat()
+            review["dealership"] = request.POST.get('dealership', False)
+            review["review"] = request.POST.get('review', False)
+            review["name"] = request.user.username
+            review["purchase"] = False
+            review["purchase_date"] = request.user.get('purchase_date', False)
+            # review["car_make"] = car.make
+            # review["car_model"] = car.name
+            # review["car_year"] = int(car.year.strftime("%Y"))
+            json_payload = dict()
+            json_payload["review"] = review
+            response = post_request(url="https://5d414de5.us-south.apigw.appdomain.cloud/api/review",
+                                    json_payload=json_payload, dealerId=dealer_id)
+            print(response)
+            return HttpResponse(response)
+    return
+
