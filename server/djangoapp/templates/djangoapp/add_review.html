@@ -11,6 +11,80 @@
 
 </head>
     <body>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid d-flex justify-content-start">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="{% url 'djangoapp:index' %}">
+                        <b class="text-white">Best Cars</b> <i class="navbar-text">dealership</i>
+                    </a>
+                </div>
+                <div class="dropdown">
+                    <a class="btn btn-dark navbar-text dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        More
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'djangoapp:contact' %}">Contact</a>
+                        <a class="dropdown-item" href="{% url 'djangoapp:about' %}">About Us</a>
+                    </div>
+                </div>
+                <ul class="nav navbar-nav ml-auto">
+                    {% if user.is_authenticated %}
+                    <li>
+                    <!-- add logged in info here -->
+                        <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
+                        <a class="btn btn-dark text-primary" href="{% url 'djangoapp:logout' %}">Logout</a>
+                    </li>
+                    {% else %}
+                    <li>
+                        <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input type="text" class="form-control" style="max-width:150px" name="username" placeholder="User Name">
+                                <input type="password" class="form-control" style="max-width:150px" name="psw" placeholder="Password">
+                                <button type="submit" class="btn btn-primary">Login</button>
+                                <a href="{% url 'djangoapp:signup' %}" class="btn btn-dark">Sign Up</a>
+                            </div>
+                        </form>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+        <h2> Write a review about <b>{{dealer_name}}</b></h2>
     <!--Add review form here -->
+        <form class="form container" action="{% url 'djangoapp:add_review' dealer_id %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="content">Please write your review below:</label>
+              <textarea class="form-control" name="content" id="content" rows="3" required></textarea>
+            </div>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="checkbox" class="form-check-input" name="purchasecheck" id="purchasecheck" >
+                    Purchased
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="car">Select a car from this dealer: <small class="text-muted">(model-make-year)</small></label>
+                <select class="form-select btn btn-dark" name="car" id="car">
+                    {% for car in cars %}
+                        {% if car.dealer_id == dealer_id %}
+                        <option selected value={{car.id}}>{{car.name}}-{{car.make.name}}-{{car.year|date:"Y"}}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="purchasedate">Purchase date:</label>
+                <input class="date-own form-control" type="text" name="purchasedate" id="purchasedate">
+                <script type="text/javascript">
+                    $('.date-own').datepicker({
+                        format: 'mm/dd/yyyy'
+                    });
+                </script>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
     </body>
 </html>

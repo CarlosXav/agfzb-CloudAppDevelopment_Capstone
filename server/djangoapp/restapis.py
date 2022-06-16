@@ -76,11 +76,15 @@ def get_dealer_reviews_from_cf(url, dealer_id):
         #Get the result list in JSON as reviews
         reviews = json_result["body"]["data"]["docs"]
         for review in reviews:
-            review_obj = DealerReview(dealership=review["dealership"], name=review["name"],
-                                    purchase=review["purchase"], review=review["review"],
-                                    purchase_date=review["purchase_date"],
-                                    car_make=review["car_make"], car_model=review["car_model"],
-                                    car_year=review["car_year"], sentiment=analyze_review_sentiments(review["review"]),
+            review_obj = DealerReview(dealership=review.get("dealership", ""),
+                                    name=review.get("name", ""),
+                                    purchase=review.get("purchase", False),
+                                    review=review.get("review", ""),
+                                    purchase_date=review.get("purchase_date", ""),
+                                    car_make=review.get("car_make", ""),
+                                    car_model=review.get("car_model", ""),
+                                    car_year=review.get("car_year", ""),
+                                    sentiment=analyze_review_sentiments(review["review"]),
                                     id=review["id"])
             results.append(review_obj)
 
@@ -91,20 +95,22 @@ def get_dealer_reviews_from_cf(url, dealer_id):
 def get_dealer_by_id_from_cf(url, dealerId):
     results = []
     #Call get_request with url
-    json_result = get_request(url=url)
+    json_result = get_request(url=url, dealerId = dealerId)
     if json_result:
         #Get the result list in JSON as dealers
         dealers = json_result["result"]
         for dealer in dealers:
             #Check if the id matches the requested dealerId
             if dealer["id"] == dealerId:
+                print("found dealer")
                 #Create each CarDealer obj with the json results
                 dealer_obj = CarDealer(address=dealer["address"], city=dealer["city"],
                                     full_name=dealer["full_name"], id=dealer["id"],
                                     lat=dealer["lat"], long=dealer["long"],
                                     short_name=dealer["short_name"], st=dealer["st"],
                                     zip=dealer["zip"])
-            results.append(dealer_obj)
+                results.append(dealer_obj)
+                print(f"Dealer: {results}")
     return results
 
 #Create get dealer by state function
